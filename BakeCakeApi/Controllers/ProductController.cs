@@ -76,15 +76,11 @@ namespace BakeCakeApi.Controllers
                 return NotFound();
             }
 
-            ICollection<Recipe> recipes = _context.Recipes.Include(x => x.RecipeProducts.Select(xx => xx.Product)).Where(x => x.RecipeProducts.Select(xx => xx.Product) == product).ToList();
+            ICollection<RecipeProducts> recipeProducts = _context.RecipeProducts.Include(x => x.Product).Where(x => x.Product.Id == product.Id).ToList();
 
-            foreach(Recipe recipe in recipes)
+            foreach(RecipeProducts recipeProduct in recipeProducts)
             {
-                RecipeProducts recipeProduct = recipe.RecipeProducts.Where(x => x.Product == product).FirstOrDefault();
-                if (recipeProduct != null)
-                {
-                    recipe.RecipeProducts.Remove(recipeProduct);
-                }
+                _context.RecipeProducts.Remove(recipeProduct);
             }
             product.IsDeleted = true;
             product.DeletedAt = DateTime.Now;
